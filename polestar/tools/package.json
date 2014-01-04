@@ -1,0 +1,27 @@
+{
+  "name": "polestar",
+  "description": "Static site generation for Polestar.",
+  "version": "0.0.1",
+  "homepage": "http://github.com/dnordstrom/polestar",
+  "keywords": ["site", "generation", "static"],
+  "author": "L. Daniel Nordstrom",
+  "main": "polestar.js",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/dnordstrom/polestar"
+  },
+  "dependencies": {
+    "cheerio": "0.12.4",
+    "commander": "2.1.0",
+    "request": "2.30.0"
+  },
+  "contributors": [{
+      "name": "L. Daniel Nordstrom",
+      "github": "https://github.com/dnordstrom"
+    }
+  ],
+  "engines": { "node": ">=0.2.5" },
+  "licenses": [{
+    "type": "MPL-2.0"
+  }]
+}
