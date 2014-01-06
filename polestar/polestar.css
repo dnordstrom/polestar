@@ -116,7 +116,7 @@
 
 body {
   color: #555;
-  font-family: "Fira Sans", Helvetica, Arial, sans-serif;
+  font-family: "Fira Sans", "Open Sans", Helvetica, Arial, sans-serif;
   font-size: 18px;
   font-size: 1.125rem;
   font-weight: 300;
@@ -125,7 +125,7 @@ body {
   -ms-hyphens: auto;
   -o-hyphens: auto;
   hyphens: auto;
-  line-height: 1.5;
+  line-height: 1.55;
   margin: 0;
   orphans: 4;
   padding: 0;
@@ -172,7 +172,6 @@ h6 {
 }
 
 h1 {
-/**  border-width: 2px;*/
   font-size: 60px;
   font-size: 3.75rem;
 }
@@ -226,15 +225,21 @@ code,
 kbd,
 samp,
 var {
+  border: 1px solid rgb(221, 221, 221);
   margin: 0 0.15em;
+  padding: 2px 5px 0px 5px;
+  white-space: nowrap;
 }
 
 pre code {
+  border: none;
   margin: 0;
+  padding: 0;
+  white-space: pre;
 }
 
 p {
-  margin: 0 0 1.45em;
+  margin: 0 0 1.55em;
 }
 
 p:last-child {
@@ -364,7 +369,7 @@ dd:hover {
 
 .writings div {
   margin: 0 auto;
-  max-width: 55rem;
+  max-width: 50rem;
   padding: 0 4rem;
 }
 

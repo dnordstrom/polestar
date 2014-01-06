@@ -2,8 +2,8 @@
  * Polestar is a tiny Markdown site authoring and blogging tool in
  * JavaScript---GitHub flavored and fully client-side.
  *
- * @author    0.0.1
- * @version   L. D. Nordstrom <d@mrnordstrom.com>
+ * @author    L. D. Nordstrom <d@mrnordstrom.com>
+ * @version   0.0.1
  * @license   MPL 2.0
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -12,30 +12,32 @@
  */
 
 /**
- * @class
  * Global Polestar constructor.
  *
+ * @class
  * @param {Object} preferences User defined preferences
  */ 
 function Polestar(preferences) {
-  // Self reference as closures change scope; use instead of `this`
   var self = this
 
   /**
    * @property {Object} preferences Polestar preferences
-   * @property {String} preferences.into Element to append articles to
-   * @property {String} preferences.repo GitHub repository
-   * @property {String} preferences.branch GitHub branch
-   * @property {Boolean} preferences.loadAll Load all on page load
-   * @property {Boolean} preferences.permalinks Display '#' permalinks
+   * @property {String} preferences.branch Git branch
+   * @property {Boolean} preferences.cache Enable sessionStorage cache
+   * @property {String} preferences.draft Draft article to load
+   * @property {String} preferences.into CSS selector for container
+   * @property {Boolean} preferences.loadAll Load all writings at once
    * @property {Array} preferences.plugins Plugins to run
+   * @property {String} preferences.repo GitHub repository
    */
   self.preferences = applyPreferencesToDefaults(preferences, {
-    into: 'body',
-    repo: false,
     branch: 'master',
+    cache: true,
+    draft: '',
+    into: '',
     loadAll: false,
-    plugins: false
+    plugins: [],
+    repo: ''
   })
 
   /** Holds element into which articles are rendered */
@@ -47,10 +49,10 @@ function Polestar(preferences) {
   /** Holds ETag for repository contents, for last modified check */
   self.articlesETag = false
 
-  /** Holds objects of loaded articles ({ id, element, content }) */
+  /** Holds objects of loaded writings: { id, element, content } */
   self.articles = []
   
-  /** Holds objects of partials ({ id, at, element, content }) */
+  /** Holds objects of partials: { id, at, element, content } */
   self.partials = []
 
   /** Cached page height for onscroll calculation */
@@ -59,14 +61,14 @@ function Polestar(preferences) {
   /** Cached viewport height for onscroll calculation */
   self.viewportHeight = 0
 
-  /** Used to autoload until this target article ID has been reached */
+  /** Autoload until this target writing ID has been reached */
   self.locationHashTarget = false
 
   /** Various bits of text that may or may not be displayed */
   self.messages = {
     error: 'Something just went horribly wrong',
     rateLimitExceeded: 'GitHub\u2019s hourly rate-limit was ' +
-     'exceeded for your IP address, but things will work again soon.'
+      'exceeded for your IP address, but things will work again soon.'
   }
   
   /**
@@ -93,30 +95,37 @@ function Polestar(preferences) {
    * @method
    */
   function initialize() {
+    setContainer()
+    
     if (typeof window.sessionStorage !== 'undefined') {
       self.articlesETag = sessionStorage.getItem('etag')
     }
     
-    setContainer()
-    loadArticles()
+    if (self.preferences.draft) {
+      loadDraft()
+    }
     
-    if (!loadPartialsFromCache()) {
+    if (!self.preferences.cache || !loadPartialsFromCache()) {
       loadPartials()
     }
+    
+    if (self.preferences.repo) {
+      loadArticles()
+      
+      window.onscroll = function (event) {
+        if (window.pageYOffset !== undefined) {
+          var scrollTop = window.pageYOffset
+        } else {
+          var scrollTop =
+            (document.documentElement ||
+             document.body.parentNode ||
+             document.body).scrollTop
+        }
 
-    window.onscroll = function (event) {
-      if (window.pageYOffset !== undefined) {
-        var scrollTop = window.pageYOffset
-      } else {
-        var scrollTop =
-          (document.documentElement ||
-           document.body.parentNode ||
-           document.body).scrollTop
-      }
-
-      /* If scroll reaches bottom of page */
-      if (scrollTop === self.pageHeight - self.viewportHeight) {
-        loadNextArticle()
+        /* If scroll reaches bottom of page */
+        if (scrollTop === self.pageHeight - self.viewportHeight) {
+          loadNextArticle()
+        }
       }
     }
   }
@@ -135,23 +144,23 @@ function Polestar(preferences) {
     element.setAttribute('class', 'error')
     element.appendChild(heading)
     element.appendChild(paragraph)
-    paragraph.appendChild(document.createTextNode(message))
     heading.appendChild(document.createTextNode(self.messages.error))
+    paragraph.appendChild(document.createTextNode(message))
 
     document.body.appendChild(element)
   }
 
   /**
-   * Determines the target article ID from location hash, and checks
-   * to see that the article actually exists (to make sure all
-   * articles will not be loaded unnecessarily).
+   * Makes sure the writing ID specified in location hash refers to an
+   * actual writing, so they all won't be loaded unnecessarily. If it
+   * finds the ID, it stores it in `this.locationHashTarget`.
    *
    * @method
    */
-  function setLocationHashTarget() {
-    if (window.location.hash) {
+  function checkLocationHashTarget() {
+    if (location.hash) {
       var target =
-        window.location.hash.substr(1, window.location.hash.length - 1)
+        location.hash.substr(1, location.hash.length - 1)
       
       for (var i = 0; i < self.articlesMetaData.length; ++i) {
         var file = self.articlesMetaData[i].name
@@ -318,15 +327,11 @@ function Polestar(preferences) {
     var parts = self.preferences.repo.split('/')
     var repository = parts.slice(0, 2).join('/')
     var dir = (parts.length > 2 ? '/' + parts.slice(2).join('/') : '')
-    var url = 'https://api.github.com/repos/' +
-      repository +
-      '/contents' +
-      dir +
-      '?ref=' +
-      self.preferences.branch
+    var url = 'https://api.github.com/repos/' + repository +
+      '/contents' + dir + '?ref=' + self.preferences.branch
     var options = { url: url }
 
-    if (self.articlesETag) {
+    if (self.preferences.cache && self.articlesETag) {
       options.headers = { 'If-None-Match': self.articlesETag }
     }
     
@@ -341,7 +346,7 @@ function Polestar(preferences) {
           })
           .reverse()
 
-        setLocationHashTarget()
+        checkLocationHashTarget()
         loadNextArticle()
       }
     })
@@ -391,7 +396,7 @@ function Polestar(preferences) {
           loadNextArticle()
         }
         
-        refreshCache()
+        cache()
       })
     }
   }
@@ -448,7 +453,7 @@ function Polestar(preferences) {
             element.innerHTML = partial.content
             runPlugins('afterRender', partial)
             
-            refreshCache()
+            cache()
           })
         })
       }(element, at, (id ? id : element.getAttribute('data-at'))))
@@ -482,36 +487,88 @@ function Polestar(preferences) {
    * @method
    */
   function loadPartialsFromCache() {
-    if (typeof window.sessionStorage !== 'undefined') {
+    var containers = document.querySelectorAll('*[data-at]').length
+    
+    if (containers && typeof window.sessionStorage !== 'undefined') {
       self.partials = JSON.parse(
         sessionStorage.getItem('partials')
       ) || []
       
       for (var i = 0; i < self.partials.length; ++i) {
         var partial = self.partials[i]
-      
-        runPlugins('beforeRender', partial)
         var element =
           document.querySelector('*[data-at="' + partial.at + '"]')
-        element.innerHTML = partial.content
-        partial.element = element
-        runPlugins('afterRender', partial)
+      
+        if (partial && element) {
+          runPlugins('beforeRender', partial)
+          element.innerHTML = partial.content
+          partial.element = element
+          runPlugins('afterRender', partial)
+        }
       }
     }
     
-    return !!self.partials.length
+    return self.partials.length === containers
   }
   
   /**
-   * Caches articles and partials in session storage (HTML5 API);
-   * subsequent requests don't count towards GitHub API's rate limit.
+   * Renders draft specified in the `draft` preference into the
+   * writings container, always reloading (bypassing `cache` setting).
    *
    * @method
    */
-  function refreshCache() {
-    if (typeof window.sessionStorage !== 'undefined') {
-      sessionStorage.setItem('etag', self.articlesETag)
+  function loadDraft() {
+    if (self.preferences.draft) {
+      var at = self.preferences.draft
+      var id = at.split('/')[at.split('/').length - 1]
       
+      getURL({ url: at + '.md' }, function (response) {
+        getParsedMarkdown(response.body, function (content) {
+          if (content) {
+            var element = document.createElement('article')
+            var div = document.createElement('div')
+            var article = {
+              at: at,
+              content: content,
+              element: element,
+              id: id
+            }
+            
+            runPlugins('beforeRender', article)
+            
+            div.innerHTML = article.content
+            element.appendChild(div)
+            element.setAttribute('id', article.id)
+            article.element = element
+
+            if (self.articles.length) {
+              self.container.insertBefore(
+                element,
+                self.articles[self.articles.length - 1].element
+              )
+            } else {
+              self.container.appendChild(element)
+            }
+            
+            runPlugins('afterRender', article)
+          }
+        })
+      })
+    }
+  }
+  
+  /**
+   * Caches current ETag, repository contents, writings, and partials
+   * in `window.sessionStorage` to avoid further requests and, in
+   * particular, the GitHub API rate limit during development. **Turn
+   * this off (e.g. to preview drafts) using the "cache" preference.**
+   *
+   * @method
+   */
+  function cache() {
+    if (self.preferences.cache &&
+        typeof window.sessionStorage !== 'undefined') {
+      sessionStorage.setItem('etag', self.articlesETag)
       sessionStorage.setItem('meta', JSON.stringify(
         self.articlesMetaData
       ))
