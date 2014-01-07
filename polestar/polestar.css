@@ -250,6 +250,7 @@ ul,
 ol,
 dl {
   margin: 0 0 2em;
+  padding: 0;
 }
 
 li {
@@ -371,6 +372,23 @@ dd:hover {
   margin: 0 auto;
   max-width: 50rem;
   padding: 0 4rem;
+}
+
+/** Lists */
+
+.writings ul {
+  list-style-type: none;
+}
+
+.writings ul li {
+  position: relative;
+}
+
+.writings ul li:before {
+  content: "–";
+  left: -1.5em;
+  position: absolute;
+  top: 0;
 }
 
 /** Permalinks */

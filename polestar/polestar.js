@@ -64,6 +64,9 @@ function Polestar(preferences) {
   /** Autoload until this target writing ID has been reached */
   self.locationHashTarget = false
 
+  /** Location hashbang debug parameters: abc.com#!key=value&... */
+  self.debugParameters = {}
+
   /** Various bits of text that may or may not be displayed */
   self.messages = {
     error: 'Something just went horribly wrong',
@@ -96,6 +99,7 @@ function Polestar(preferences) {
    */
   function initialize() {
     setContainer()
+    getDebugParameters()
     
     if (typeof window.sessionStorage !== 'undefined') {
       self.articlesETag = sessionStorage.getItem('etag')
@@ -125,6 +129,32 @@ function Polestar(preferences) {
         /* If scroll reaches bottom of page */
         if (scrollTop === self.pageHeight - self.viewportHeight) {
           loadNextArticle()
+        }
+      }
+    }
+  }
+
+  /**
+   * Parses debug parameters into key-value pairs stored in
+   * `this.debugParameters`. These are passed via a "location
+   * hashbang": a location hash starting with an exclamation point.
+   * As opposed to query strings, they're never sent to the server.
+   *
+   * For example, `example.com#!username=myself&auth` gives us
+   * `{ username: 'myself', auth: true }`
+   */
+  function getDebugParameters() {
+    if (location.hash && location.hash.charAt(1) === '!') {
+      var parameters = location.hash.substr(2).split('&')
+
+      for (var i = 0; i < parameters.length; ++i) {
+        parameter = decodeURI(parameters[i])
+
+        if (parameter.indexOf('=') === -1) {
+            self.debugParameters[parameter.trim()] = true
+        } else {
+            var pair = parameter.split('=')
+            self.debugParameters[pair[0].trim()] = pair[1].trim()
         }
       }
     }
@@ -266,7 +296,20 @@ function Polestar(preferences) {
 
     xhr.open('POST', 'https://api.github.com/markdown/raw', true)
     xhr.setRequestHeader('Content-Type', 'text/x-markdown')
+
+    if (self.debugParameters.hasOwnProperty('username') &&
+        self.debugParameters.hasOwnProperty('password')) {
+      var username = self.debugParameters.username
+      var password = self.debugParameters.password
+
+      xhr.setRequestHeader(
+        'Authorization',
+        'Basic ' + btoa(username + ':' + password)
+      )
+    }
+
     xhr.onreadystatechange = function () {
+      console.log(xhr.getAllResponseHeaders())
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
           callback(xhr.responseText)
@@ -291,6 +334,15 @@ function Polestar(preferences) {
     var options = {
       url: url,
       headers: { 'Accept': 'application/vnd.github.v3.raw' }
+    }
+
+    if (self.debugParameters.hasOwnProperty('username') &&
+        self.debugParameters.hasOwnProperty('password')) {
+      var username = self.debugParameters.username
+      var password = self.debugParameters.password
+
+      options.headers['Authorization'] =
+        'Basic ' + btoa(username + ':' + password)
     }
     
     getURL(options, function (response) {

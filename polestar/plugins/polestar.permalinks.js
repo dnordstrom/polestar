@@ -20,9 +20,38 @@
 Polestar.Permalinks = {
   afterRender: function () {
     var permalink = document.createElement('a')
+    var dateMatches =
+        /^(\d{4})-?(\d{2})-?(\d{2}).+/.exec(this.id)
+      
+    if (dateMatches) {
+      var monthNames = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ]
+
+      var date = new Date(dateMatches.splice(1).join('-'))
+      var dateString =
+        monthNames[date.getMonth()] + ' ' +
+        date.getDate() + ', ' +
+        date.getFullYear()
+
+      permalink.appendChild(document.createTextNode(dateString))
+    } else {
+      permalink.appendChild(document.createTextNode('#'))
+    }
+
     permalink.setAttribute('class', 'permalink')
     permalink.setAttribute('href', '#' + this.id)
-    permalink.appendChild(document.createTextNode('#'))
     this.element.appendChild(permalink)
   }
 }

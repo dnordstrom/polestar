@@ -13,7 +13,9 @@
   "dependencies": {
     "cheerio": "0.12.4",
     "commander": "2.1.0",
-    "request": "2.30.0"
+    "request": "2.30.0",
+    "rss": "0.2.1",
+    "typogr": "0.6.1"
   },
   "contributors": [{
       "name": "L. Daniel Nordstrom",
