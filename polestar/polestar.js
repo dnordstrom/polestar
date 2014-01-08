@@ -70,8 +70,10 @@ function Polestar(preferences) {
   /** Various bits of text that may or may not be displayed */
   self.messages = {
     error: 'Something just went horribly wrong',
-    rateLimitExceeded: 'GitHub\u2019s hourly rate-limit was ' +
-      'exceeded for your IP address, but things will work again soon.'
+    gitHubError: 'There was a problem with the GitHub response. ' +
+      'Perhaps the rate limit was reached (try with credentials) ' +
+      'or a local draft or partial couldn\u2019t be read (check ' +
+      'files and paths).'
   }
   
   /**
@@ -243,6 +245,18 @@ function Polestar(preferences) {
   }
 
   /**
+   * Logs a message to console if debug mode has been turned on.
+   *
+   * @param {String} speaker Name of what speaks the message
+   * @param {String} message The message spoken
+   */
+  function log(speaker, message) {
+    if (self.debugParameters.hasOwnProperty('debug')) {
+      console.log('<' + speaker + '> ' + message)
+    }
+  }
+
+  /**
    * Sends an XMLHTTPRequest to a given URL (specified in `options`
    * parameter along with request headers), and returns an object
    * representing the response to a callback function. This response
@@ -263,9 +277,21 @@ function Polestar(preferences) {
         xhr.setRequestHeader(header, options.headers[header])
       }
     }
+
+    if (options.url.match(/^https:\/\/api.github.com/)) {
+      setGitHubAuthenticationHeadersOnXHR(xhr)
+    }
     
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
+        if (xhr.getResponseHeader('X-RateLimit-Remaining')) {
+          log('Polestar#getURL', 'You can make another ' +
+            xhr.getResponseHeader('X-RateLimit-Remaining') +
+            ' GitHub API requests within the rate limit. If you' +
+            ' are using your credentials, it should be plenty.'
+          )
+        }
+
         if (xhr.status === 200) {
           callback({
             body: xhr.responseText,
@@ -274,7 +300,9 @@ function Polestar(preferences) {
         } else if (xhr.status === 304) {
           callback(false)
         } else {
-          displayError(self.messages.rateLimitExceeded)
+          log('Polestar#getURL', 'Hey, I got status code ' +
+            xhr.status + ' from URL \'' + options.url + '\'.')
+          displayError(self.messages.gitHubError)
           callback(false)
         }
       }
@@ -297,19 +325,9 @@ function Polestar(preferences) {
     xhr.open('POST', 'https://api.github.com/markdown/raw', true)
     xhr.setRequestHeader('Content-Type', 'text/x-markdown')
 
-    if (self.debugParameters.hasOwnProperty('username') &&
-        self.debugParameters.hasOwnProperty('password')) {
-      var username = self.debugParameters.username
-      var password = self.debugParameters.password
-
-      xhr.setRequestHeader(
-        'Authorization',
-        'Basic ' + btoa(username + ':' + password)
-      )
-    }
+    setGitHubAuthenticationHeadersOnXHR(xhr)
 
     xhr.onreadystatechange = function () {
-      console.log(xhr.getAllResponseHeaders())
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
           callback(xhr.responseText)
@@ -320,6 +338,25 @@ function Polestar(preferences) {
     }
     
     xhr.send(source)
+  }
+
+  /**
+   * Sets the basic authentication headers for the GitHub API on an
+   * XMLHttpRequest object if credentials have been specified.
+   *
+   * @param {XMLHttpRequest} XMLHttpRequest object to set headers on
+   */
+  function setGitHubAuthenticationHeadersOnXHR(xhr) {
+    if (self.debugParameters.hasOwnProperty('username') &&
+        self.debugParameters.hasOwnProperty('password')) {
+      var username = self.debugParameters.username
+      var password = self.debugParameters.password
+
+      xhr.setRequestHeader(
+        'Authorization',
+        'Basic ' + btoa(username + ':' + password)
+      )
+    }
   }
 
   /**
@@ -335,22 +372,13 @@ function Polestar(preferences) {
       url: url,
       headers: { 'Accept': 'application/vnd.github.v3.raw' }
     }
-
-    if (self.debugParameters.hasOwnProperty('username') &&
-        self.debugParameters.hasOwnProperty('password')) {
-      var username = self.debugParameters.username
-      var password = self.debugParameters.password
-
-      options.headers['Authorization'] =
-        'Basic ' + btoa(username + ':' + password)
-    }
     
     getURL(options, function (response) {
       getParsedMarkdown(response.body, function (content) {
         if (content) {
           callback(content)
         } else {
-          displayError(self.messages.rateLimitExceeded)
+          displayError(self.messages.gitHubError)
         }
       })
     })
