@@ -437,7 +437,7 @@ h6:not(:hover) .anchor {
  * Error message
  */
 .error {
-  background: #FFFFFF;
+  background: #F9F9F9;
   height: 100%;
   left: 0;
   padding: 4em 0 0 0;
@@ -451,4 +451,35 @@ h6:not(:hover) .anchor {
 .error h1 {
   font-size: 32px;
   font-size: 2rem;
+}
+
+/**
+ * Notice message
+ */
+
+.notice {
+  background: #F9F9F9;
+  font-size: 15px;
+  font-size: 0.9375rem;
+  padding: 4em;
+  position: relative;
+  text-align: center;
+  z-index: 2;
+}
+
+.notice p {
+  display: inline-block;
+  opacity: 1;
+  padding: 0.7em 1.2em 0.55em;
+  transition: all 0.25s ease 0.25s;
+}
+
+.notice p:hover {
+  opacity: 1;
+  transition: all 0.15s ease 0s;
+}
+
+.notice.notice-bordered p {
+  border-bottom: 2px solid rgb(221, 221, 221);
+  border-top: 2px solid rgb(221, 221, 221);
 }
