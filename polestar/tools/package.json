@@ -13,6 +13,7 @@
   "dependencies": {
     "cheerio": "0.12.4",
     "commander": "2.1.0",
+    "node-minify": "0.8.2",
     "request": "2.30.0",
     "rss": "0.2.1",
     "typogr": "0.6.1"

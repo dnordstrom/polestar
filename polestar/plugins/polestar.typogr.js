@@ -6,7 +6,7 @@
  * `<pre>` or `<code>`.
  *
  * @author  L. Daniel Nordstrom <d@mrnordstrom.com>
- * @version 0.0.1
+ * @version 0.1.0
  * @license MPL 2.0
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public

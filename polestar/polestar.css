@@ -7,6 +7,7 @@
  * White          · rgb(255, 255, 255)
  * Lighter Gray   · rgb(221, 221, 221)
  * Darker Gray    · rgb(153, 153, 153)
+ * Darkest Gray   · rgb(85, 85, 85)
  * Lighter Green  · rgb(174, 224, 200)
  * Darker Green   · rgb(129, 206, 167)
  *
@@ -147,7 +148,7 @@ a:hover {
 
 b,
 strong {
-  font-weight: 400;
+  font-weight: 500;
 }
 
 img {
@@ -228,6 +229,12 @@ var {
   margin: 0 0.15em;
   padding: 2px 5px 0px 5px;
   white-space: nowrap;
+}
+
+pre code {
+  border: none;
+  margin: 0;
+  padding: 0;
 }
 
 pre {
@@ -393,48 +400,6 @@ dd:hover {
   top: 0;
 }
 
-/** Permalinks */
-
-.permalink {
-  border: none;
-  opacity: 0.25;
-  position: absolute;
-  right: 4rem;
-  text-decoration: none;
-  top: 4rem;
-}
-
-.permalink:hover {
-  opacity: 1;
-}
-
-/** Heading anchors (plugin) */
-
-.anchor,
-.anchor:hover {
-  border: none;
-  font-size: 1.75rem;
-  left: -0.5em;
-  margin-top: -1.35rem;
-  opacity: 0.25;
-  position: absolute;
-  text-decoration: none;
-  top: 50%;
-}
-
-.anchor:hover {
-  opacity: 1;
-}
-
-h1:not(:hover) .anchor,
-h2:not(:hover) .anchor,
-h3:not(:hover) .anchor,
-h4:not(:hover) .anchor,
-h5:not(:hover) .anchor,
-h6:not(:hover) .anchor {
-  display: none;
-}
-
 /**
  * Error message
  */
@@ -507,7 +472,7 @@ h6:not(:hover) .anchor {
  */
 
 .highlight {
-  background: #ffffff;
+  /* background: #ffffff; */
 }
 
 .highlight .c {
@@ -773,4 +738,35 @@ h6:not(:hover) .anchor {
 .highlight .gc {
   color: #999;
   background-color: #EAF2F5;
+}
+
+/**
+ * Plugin: Permalinks
+ */
+
+.permalink {
+  border: none;
+  opacity: 0.25;
+  position: absolute;
+  right: 4rem;
+  text-decoration: none;
+  top: 4rem;
+}
+
+.permalink:hover {
+  opacity: 1;
+}
+
+/**
+ * Plugin: Hover Lists
+ */
+
+ul li .hoverlist-body {
+  opacity: 0.7;
+  transition: all 0.25s ease 0.25s;
+}
+
+ul li:hover .hoverlist-body {
+  opacity: 1;
+  transition: all 0.15s ease 0s;
 }

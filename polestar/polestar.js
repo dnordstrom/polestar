@@ -2,9 +2,9 @@
  * Polestar is a tiny Markdown site authoring and blogging tool in
  * JavaScript---GitHub flavored and fully client-side.
  *
- * @author    L. D. Nordstrom <d@mrnordstrom.com>
- * @version   0.0.1
- * @license   MPL 2.0
+ * @author  L. D. Nordstrom <d@mrnordstrom.com>
+ * @version 0.1.0
+ * @license MPL 2.0
  * 
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
