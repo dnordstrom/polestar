@@ -5,18 +5,18 @@ Polestar is a tiny Markdown site authoring and blogging tool in JavaScript—Git
 
 This repository is an example copy of [my own blog](https://github.com/dnordstrom/mrnordstrom.com), so if you're interested, take a look at `index.html` for usage, `polestar/polestar.js` for the source, or [mrnordstrom.com](https://mrnordstrom.com) to see it in the wild.
 
-**This is alpha software**—some things may not work, other things will definitely change. This README (and other documentation) is a quickly put together work in progress.**
+**This is alpha software**—some things may not work and others will definitely change. This documentation is a quickly put together work in progress.
 
 *Much of the information in this README made its first appearance in the introductory post at [mrnordstrom.com](http://mrnordstrom.com).*
 
 Notable Notes
 -------------
 
-- **January 8, 2014 &middot; Minification**<br>Added a Node.js-based minification tool at `polestar/tools/polestar.minify.js` (see usage below), and committed minified CSS and JavaScript.
-- **January 8, 2014 &middot; Syntax Highlighting**<br>The stylesheet now includes stylish GitHub-style styling&mdash;[use fenced code blocks and specify the language](https://help.github.com/articles/github-flavored-markdown#syntax-highlighting).
-- **January 8, 2014 &middot; GitHub Credentials**<br>You may now increase the GitHub API rate limit from 60 to 5000 requests by specifying your credentials with "username" and "password" debug parameters (immensely useful during preview or development), as such: `example.com#!username=dnordstrom&password=whatever`
-- **January 8, 2014 &middot; Debug Output**<br>Logging debug output, of admittedly limited use, when using the `#!debug` parameter&mdash;for instance, remaining requests within GitHub's rate limit.
-- **January 7, 2014 &middot; Debug Parameters**<br>Query string like key-value pairs (value is optional) are now parsed if inserted after a location hashbang (e.g. "example.com**#!key=value&key**").
+- **January 8, 2014 &middot; Minification Script**<br>Added a Node.js-based minification script at `polestar/tools/polestar.minify.js` (see usage below).
+- **January 8, 2014 &middot; Syntax Highlighting**<br>The CSS now includes stylish GitHub-style styling&mdash;[use fenced code blocks and specify language](https://help.github.com/articles/github-flavored-markdown#syntax-highlighting).
+- **January 8, 2014 &middot; GitHub Credentials**<br>You may now **_increase the GitHub API rate limit from 60 to 5000 requests_** by specifying your credentials in "username" and "password" debug parameters (immensely useful during preview and development), as such: `example.com#!username=dnordstrom&password=whatever`
+- **January 8, 2014 &middot; Debug Output**<br>You may now enable debug console output (of admittedly limited use) by using the `#!debug` parameter&mdash;remaining requests within GitHub's rate limit, for instance.
+- **January 7, 2014 &middot; Debug Parameters**<br>Query string like key-value pairs (value is optional) are now parsed if inserted after a location hashbang (e.g. `example.com#!key=value&key`).
 - **January 7, 2014 &middot; Static Site and Feed Generator**<br>An early alpha is available at `polestar/tools/polestar.static.js`. It's a quick and dirty Node.js-based command line tool I use to generate a feed.xml file and search engine indexable HTML versions of posts in a `/static` subdirectory of my site. Please note that it needs a gigantic drop of miserably heart-straining work before we call it a beta.
 
 Featured Features
