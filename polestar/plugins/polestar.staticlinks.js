@@ -13,17 +13,20 @@
  */
 
 /**
- * This function is called for each article, in the context of the
- * object representing the article. This object has properties for
- * the ID (`id`), content (`content`), and HTML node (`element`).
+ * A plugin is an object with methods acting as "hooks," such as
+ * `beforeRender()` or `afterAll()`. All methods are called with the
+ * polestar instance as the first argument. Article specific method
+ * like `afterRender()` are also passed an object literal
+ * representation of the article, with properties such as `id`,
+ * `content` (HTML content) and `element` (containing HTML node).
  *
  * @method
  */
 Polestar.Staticlinks = {
-  afterRender: function () {
+  afterRender: function (polestar, writing) {
     var permalink = document.createElement('a')
     var dateMatches =
-        /^(\d{4})-?(\d{2})-?(\d{2}).+/.exec(this.id)
+        /^(\d{4})-?(\d{2})-?(\d{2}).+/.exec(writing.id)
       
     if (dateMatches) {
       var monthNames = [
@@ -53,7 +56,7 @@ Polestar.Staticlinks = {
     }
 
     permalink.setAttribute('class', 'permalink')
-    permalink.setAttribute('href', 'static/' + this.id)
-    this.element.appendChild(permalink)
+    permalink.setAttribute('href', 'static/' + writing.id)
+    writing.element.appendChild(permalink)
   }
 }

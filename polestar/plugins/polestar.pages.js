@@ -14,6 +14,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+/**
+ * A plugin is an object with methods acting as "hooks," such as
+ * `beforeRender()` or `afterAll()`. All methods are called with the
+ * polestar instance as the first argument. Article specific method
+ * like `afterRender()` are also passed an object literal
+ * representation of the article, with properties such as `id`,
+ * `content` (HTML content) and `element` (containing HTML node).
+ *
+ * @method
+ */
 Polestar.Pages = (function () {
   var self = this
 
@@ -21,12 +31,11 @@ Polestar.Pages = (function () {
    * Appends an error message layer to the page.
    *
    * @method
-   * @param {String} message Error message to display
+   * @param {String} content Page content as HTML
    */
-  self.displayPage = function (message) {
+  function showPage(content) {
     var element = document.createElement('div')
-    var heading = document.createElement('h1')
-    var paragraph = document.createElement('p')
+    var innerElement = document.createElement('div')
     var closeLink = document.createElement('a')
 
     closeLink.setAttribute('class', 'close')
@@ -37,12 +46,10 @@ Polestar.Pages = (function () {
       document.body.removeChild(element)
     }
 
-    element.setAttribute('class', 'error')
-    element.appendChild(heading)
-    element.appendChild(paragraph)
+    innerElement.innerHTML = content
+    element.setAttribute('class', 'page')
+    element.appendChild(innerElement)
     element.appendChild(closeLink)
-    heading.appendChild(document.createTextNode(self.messages.error))
-    paragraph.appendChild(document.createTextNode(message))
 
     document.body.appendChild(element)
   }

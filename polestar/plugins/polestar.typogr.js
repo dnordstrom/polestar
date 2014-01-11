@@ -15,14 +15,17 @@
  */
 
 /**
- * This function is called for each article, in the context of the
- * object representing the article. This object has properties for
- * the ID (`id`), content (`content`), and HTML node (`element`).
+ * A plugin is an object with methods acting as "hooks," such as
+ * `beforeRender()` or `afterAll()`. All methods are called with the
+ * polestar instance as the first argument. Article specific method
+ * like `afterRender()` are also passed an object literal
+ * representation of the article, with properties such as `id`,
+ * `content` (HTML content) and `element` (containing HTML node).
  *
  * @method
  */
 Polestar.Typogr = {
-  beforeRender: function () {
+  beforeRender: function (polestar, writing) {
     var re_skip_tags =
       /<(\/)?(pre|code|kbd|script|math|title)[^>]*>/i;
       
@@ -263,6 +266,6 @@ Polestar.Typogr = {
           .replace('"', '&#8220;');
     };
 
-    this.content = smartypants(this.content)
+    writing.content = smartypants(writing.content)
   }
 }

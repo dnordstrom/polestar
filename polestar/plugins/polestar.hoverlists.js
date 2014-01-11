@@ -31,15 +31,18 @@
  */
 
 /**
- * This function is called for each article, in the context of the
- * object representing the article. This object has properties for
- * the ID (`id`), content (`content`), and HTML node (`element`).
+ * A plugin is an object with methods acting as "hooks," such as
+ * `beforeRender()` or `afterAll()`. All methods are called with the
+ * polestar instance as the first argument. Article specific method
+ * like `afterRender()` are also passed an object literal
+ * representation of the article, with properties such as `id`,
+ * `content` (HTML content) and `element` (containing HTML node).
  *
  * @method
  */
 Polestar.HoverLists = {
-  afterRender: function () {
-    var lists = this.element.querySelectorAll('li')
+  afterRender: function (polestar, writing) {
+    var lists = writing.element.querySelectorAll('li')
 
     for (var i = 0; i < lists.length; ++i) {
       if (lists[i].innerHTML.match(/<br>/)) {

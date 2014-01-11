@@ -658,10 +658,10 @@ function Polestar(userPreferences) {
       for (var i = 0; i < preferences.plugins.length; ++i) {
         var plugin = preferences.plugins[i]
         var hasMethod = plugin.hasOwnProperty(method)
-        var runsMethod = typeof plugin[method] === 'function'
+        var canRunMethod = typeof plugin[method] === 'function'
 
-        if (hasMethod && runsMethod) {
-          plugin[method].call(article)
+        if (hasMethod && canRunMethod) {
+          plugin[method](self, article)
         }
       }
     }
