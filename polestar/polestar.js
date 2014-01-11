@@ -15,9 +15,9 @@
  * Global Polestar constructor.
  *
  * @class
- * @param {Object} preferences User defined preferences
+ * @param {Object} userPreferences User defined preferences
  */ 
-function Polestar(preferences) {
+function Polestar(userPreferences) {
   var self = this
 
   /**
@@ -30,7 +30,7 @@ function Polestar(preferences) {
    * @property {Array} preferences.plugins Plugins to run
    * @property {String} preferences.repo GitHub repository
    */
-  self.preferences = applyPreferencesToDefaults(preferences, {
+  var preferences = applyPreferencesToDefaults(userPreferences, {
     branch: 'master',
     cache: true,
     draft: '',
@@ -41,34 +41,34 @@ function Polestar(preferences) {
   })
 
   /** Holds element into which articles are rendered */
-  self.container = false
+  var container = false
 
   /** Holds repository contents as returned from GitHub */
-  self.articlesMetaData = []
+  var articlesMetaData = []
   
   /** Holds ETag for repository contents, for last modified check */
-  self.articlesETag = false
+  var articlesETag = false
 
   /** Holds objects of loaded writings: { id, element, content } */
-  self.articles = []
+  var articles = []
   
   /** Holds objects of partials: { id, at, element, content } */
-  self.partials = []
+  var partials = []
 
   /** Cached page height for onscroll calculation */
-  self.pageHeight = 0
+  var pageHeight = 0
 
   /** Cached viewport height for onscroll calculation */
-  self.viewportHeight = 0
+  var viewportHeight = 0
 
   /** Autoload until this target writing ID has been reached */
-  self.locationHashTarget = false
+  var locationHashTarget = false
 
   /** Location hashbang debug parameters: abc.com#!key=value&... */
-  self.debugParameters = {}
+  var debugParameters = {}
 
   /** Various bits of text that may or may not be displayed */
-  self.messages = {
+  var messages = {
     error: 'Something just went horribly wrong',
     gitHubError: 'There was a problem with the GitHub response. ' +
       'Perhaps the rate limit was reached (try with credentials) ' +
@@ -83,10 +83,8 @@ function Polestar(preferences) {
    */
   function constructor() {
     if (document.readyState === 'complete') {
-      // Document already loaded
       initialize()
     } else {
-      // Document not yet loaded
       document.addEventListener('DOMContentLoaded', function () {
         initialize()
       }, false)
@@ -103,19 +101,19 @@ function Polestar(preferences) {
     setContainer()
     getDebugParameters()
     
-    if (typeof window.sessionStorage !== 'undefined') {
-      self.articlesETag = sessionStorage.getItem('etag')
+    if (window.sessionStorage) {
+      articlesETag = sessionStorage.getItem('etag')
     }
     
-    if (self.preferences.draft) {
+    if (preferences.draft) {
       loadDraft()
     }
     
-    if (!self.preferences.cache || !loadPartialsFromCache()) {
+    if (!preferences.cache || !loadPartialsFromCache()) {
       loadPartials()
     }
     
-    if (self.preferences.repo) {
+    if (preferences.repo) {
       loadArticles()
       
       window.onscroll = function (event) {
@@ -129,7 +127,7 @@ function Polestar(preferences) {
         }
 
         /* If scroll reaches bottom of page */
-        if (scrollTop === self.pageHeight - self.viewportHeight) {
+        if (scrollTop === pageHeight - viewportHeight) {
           loadNextArticle()
         }
       }
@@ -153,10 +151,10 @@ function Polestar(preferences) {
         parameter = decodeURI(parameters[i])
 
         if (parameter.indexOf('=') === -1) {
-            self.debugParameters[parameter.trim()] = true
+            debugParameters[parameter.trim()] = true
         } else {
             var pair = parameter.split('=')
-            self.debugParameters[pair[0].trim()] = pair[1].trim()
+            debugParameters[pair[0].trim()] = pair[1].trim()
         }
       }
     }
@@ -176,7 +174,7 @@ function Polestar(preferences) {
     element.setAttribute('class', 'error')
     element.appendChild(heading)
     element.appendChild(paragraph)
-    heading.appendChild(document.createTextNode(self.messages.error))
+    heading.appendChild(document.createTextNode(messages.error))
     paragraph.appendChild(document.createTextNode(message))
 
     document.body.appendChild(element)
@@ -194,12 +192,12 @@ function Polestar(preferences) {
       var target =
         location.hash.substr(1, location.hash.length - 1)
       
-      for (var i = 0; i < self.articlesMetaData.length; ++i) {
-        var file = self.articlesMetaData[i].name
+      for (var i = 0; i < articlesMetaData.length; ++i) {
+        var file = articlesMetaData[i].name
         var id = file.substr(0, file.lastIndexOf('.')) || file
 
         if (target === id) {
-          self.locationHashTarget = target
+          locationHashTarget = target
           break
         }
       }
@@ -213,8 +211,8 @@ function Polestar(preferences) {
    * @method
    */
   function updateScrollValues() {
-    self.viewportHeight = document.documentElement.clientHeight
-    self.pageHeight = Math.max(
+    viewportHeight = document.documentElement.clientHeight
+    pageHeight = Math.max(
       document.documentElement.clientHeight,
       document.body.scrollHeight,
       document.documentElement.scrollHeight,
@@ -251,7 +249,7 @@ function Polestar(preferences) {
    * @param {String} message The message spoken
    */
   function log(speaker, message) {
-    if (self.debugParameters.hasOwnProperty('debug')) {
+    if (debugParameters.hasOwnProperty('debug')) {
       console.log('<' + speaker + '> ' + message)
     }
   }
@@ -302,7 +300,7 @@ function Polestar(preferences) {
         } else {
           log('Polestar#getURL', 'Hey, I got status code ' +
             xhr.status + ' from URL \'' + options.url + '\'.')
-          displayError(self.messages.gitHubError)
+          displayError(messages.gitHubError)
           callback(false)
         }
       }
@@ -319,7 +317,7 @@ function Polestar(preferences) {
    * @param {String} source Markdown source to parse
    * @param {Function} callback Callback function to pass HTML
    */
-  function getParsedMarkdown(source, callback) {
+  function parseMarkdown(source, callback) {
     var xhr = new XMLHttpRequest()
 
     xhr.open('POST', 'https://api.github.com/markdown/raw', true)
@@ -332,6 +330,7 @@ function Polestar(preferences) {
         if (xhr.status === 200) {
           callback(xhr.responseText)
         } else {
+          displayError(messages.gitHubError)
           callback(false)
         }
       }
@@ -347,10 +346,10 @@ function Polestar(preferences) {
    * @param {XMLHttpRequest} XMLHttpRequest object to set headers on
    */
   function setGitHubAuthenticationHeadersOnXHR(xhr) {
-    if (self.debugParameters.hasOwnProperty('username') &&
-        self.debugParameters.hasOwnProperty('password')) {
-      var username = self.debugParameters.username
-      var password = self.debugParameters.password
+    if (debugParameters.hasOwnProperty('username') &&
+        debugParameters.hasOwnProperty('password')) {
+      var username = debugParameters.username
+      var password = debugParameters.password
 
       xhr.setRequestHeader(
         'Authorization',
@@ -360,39 +359,14 @@ function Polestar(preferences) {
   }
 
   /**
-   * Gets raw content from GitHub at given URL and runs it through the
-   * GitHub Markdown parser, returning the results.
-   *
-   * @method
-   * @param {String} url Request URL
-   * @param {Function} callback Callback function to pass results
-   */
-  function getParsedContent(url, callback) {
-    var options = {
-      url: url,
-      headers: { 'Accept': 'application/vnd.github.v3.raw' }
-    }
-    
-    getURL(options, function (response) {
-      getParsedMarkdown(response.body, function (content) {
-        if (content) {
-          callback(content)
-        } else {
-          displayError(self.messages.gitHubError)
-        }
-      })
-    })
-  }
-
-  /**
    * Simply sets the container member to the appropriate element,
    * based on the "into" preference (defaults to document body).
    *
    * @method
    */
   function setContainer() {
-    self.container =
-      document.querySelector(self.preferences.into) || document.body
+    container =
+      document.querySelector(preferences.into) || document.body
   }
 
   /**
@@ -404,23 +378,23 @@ function Polestar(preferences) {
    * @method
    */
   function loadArticles() {
-    var parts = self.preferences.repo.split('/')
+    var parts = preferences.repo.split('/')
     var repository = parts.slice(0, 2).join('/')
     var dir = (parts.length > 2 ? '/' + parts.slice(2).join('/') : '')
     var url = 'https://api.github.com/repos/' + repository +
-      '/contents' + dir + '?ref=' + self.preferences.branch
+      '/contents' + dir + '?ref=' + preferences.branch
     var options = { url: url }
 
-    if (self.preferences.cache && self.articlesETag) {
-      options.headers = { 'If-None-Match': self.articlesETag }
+    if (preferences.cache && articlesETag) {
+      options.headers = { 'If-None-Match': articlesETag }
     }
     
     getURL(options, function (response) {
       if (response === false) {
         loadArticlesFromCache()
       } else {
-        self.articlesETag = response.headers['ETag']
-        self.articlesMetaData = JSON.parse(response.body)
+        articlesETag = response.headers['ETag']
+        articlesMetaData = JSON.parse(response.body)
           .filter(function (article) {
             return article.type === "file"
           })
@@ -442,41 +416,47 @@ function Polestar(preferences) {
    * @method
    */
   function loadNextArticle() {
-    if (self.articles.length < self.articlesMetaData.length) {
-      var nextIndex = self.articles.length
-      var url = self.articlesMetaData[nextIndex].url
-      var file = self.articlesMetaData[nextIndex].name
+    if (articles.length < articlesMetaData.length) {
+      var nextIndex = articles.length
+      var url = articlesMetaData[nextIndex].url
+      var file = articlesMetaData[nextIndex].name
       var id = file.substr(0, file.lastIndexOf('.')) || file
+      var options = {
+        url: url,
+        headers: { 'Accept': 'application/vnd.github.v3.raw' }
+      }
+      
+      getURL(options, function (response) {
+        parseMarkdown(response.body, function (content) {
+          var done = nextIndex + 1 >= articlesMetaData.length
+          var matchesTarget = id === locationHashTarget
+          var article = {
+            content: content,
+            id: id
+          }
 
-      getParsedContent(url, function (content) {
-        var done = nextIndex + 1 >= self.articlesMetaData.length
-        var matchesTarget = id === self.locationHashTarget
-        var article = {
-          content: content,
-          id: id
-        }
+          /* Conditional prevents double rendering of same article */
+          if (!articles[nextIndex]) {
+            articles[nextIndex] = article
+            
+            runPlugins('beforeRender', article)
+            renderArticle(article)
+            runPlugins('afterRender', article)
+          }
 
-        /* Conditional prevents double rendering of same article */
-        if (!self.articles[nextIndex]) {
-          self.articles[nextIndex] = article
+          /* Go to location hash if done loading without specific
+             location hash target, or when specific target is reached */
+          if ((done && !locationHashTarget) || matchesTarget) {
+            refreshLocationHash()
+          }
+
+          /* Load next if we're loading all or target isn't reached */
+          if (!done && (preferences.loadAll || !matchesTarget)) {
+            loadNextArticle()
+          }
           
-          runPlugins('beforeRender', article)
-          renderArticle(article)
-          runPlugins('afterRender', article)
-        }
-
-        /* Go to location hash if done loading without specific
-           location hash target, or when specific target is reached */
-        if ((done && !self.locationHashTarget) || matchesTarget) {
-          refreshLocationHash()
-        }
-
-        /* Load next if we're loading all or target isn't reached */
-        if (!done && (self.preferences.loadAll || !matchesTarget)) {
-          loadNextArticle()
-        }
-        
-        cache()
+          cache()
+        })
       })
     }
   }
@@ -497,7 +477,7 @@ function Polestar(preferences) {
     element.setAttribute('id', article.id)
     article.element = element
 
-    self.container.appendChild(element)
+    container.appendChild(element)
 
     updateScrollValues()
   }
@@ -519,7 +499,7 @@ function Polestar(preferences) {
       
       !(function (element, at, id) {
         getURL({ url: at + '.md' }, function (response) {
-          getParsedMarkdown(response.body, function (content) {
+          parseMarkdown(response.body, function (content) {
             var partial = {
               at: at,
               content: content,
@@ -527,7 +507,7 @@ function Polestar(preferences) {
               id: id
             }
             
-            self.partials.push(partial)
+            partials.push(partial)
             
             runPlugins('beforeRender', partial)
             element.innerHTML = partial.content
@@ -547,12 +527,12 @@ function Polestar(preferences) {
    */
   function loadArticlesFromCache() {
     if (typeof window.sessionStorage !== 'undefined') {
-      self.articles = JSON.parse(
+      articles = JSON.parse(
         sessionStorage.getItem('articles')
       )
       
-      for (var i = 0; i < self.articles.length; ++i) {
-        var article = self.articles[i]
+      for (var i = 0; i < articles.length; ++i) {
+        var article = articles[i]
         
         runPlugins('beforeRender', article)
         renderArticle(article)
@@ -569,13 +549,13 @@ function Polestar(preferences) {
   function loadPartialsFromCache() {
     var containers = document.querySelectorAll('*[data-at]').length
     
-    if (containers && typeof window.sessionStorage !== 'undefined') {
-      self.partials = JSON.parse(
+    if (containers && window.sessionStorage) {
+      partials = JSON.parse(
         sessionStorage.getItem('partials')
       ) || []
-      
-      for (var i = 0; i < self.partials.length; ++i) {
-        var partial = self.partials[i]
+
+      for (var i = 0; i < partials.length; ++i) {
+        var partial = partials[i]
         var element =
           document.querySelector('*[data-at="' + partial.at + '"]')
       
@@ -588,7 +568,7 @@ function Polestar(preferences) {
       }
     }
     
-    return self.partials.length === containers
+    return partials.length === containers
   }
   
   /**
@@ -598,12 +578,12 @@ function Polestar(preferences) {
    * @method
    */
   function loadDraft() {
-    if (self.preferences.draft) {
-      var at = self.preferences.draft
+    if (preferences.draft) {
+      var at = preferences.draft
       var id = at.split('/')[at.split('/').length - 1]
       
       getURL({ url: at + '.md' }, function (response) {
-        getParsedMarkdown(response.body, function (content) {
+        parseMarkdown(response.body, function (content) {
           if (content) {
             var element = document.createElement('article')
             var div = document.createElement('div')
@@ -621,13 +601,13 @@ function Polestar(preferences) {
             element.setAttribute('id', article.id)
             article.element = element
 
-            if (self.articles.length) {
-              self.container.insertBefore(
+            if (articles.length) {
+              container.insertBefore(
                 element,
-                self.articles[self.articles.length - 1].element
+                articles[articles.length - 1].element
               )
             } else {
-              self.container.appendChild(element)
+              container.appendChild(element)
             }
             
             runPlugins('afterRender', article)
@@ -646,22 +626,21 @@ function Polestar(preferences) {
    * @method
    */
   function cache() {
-    if (self.preferences.cache &&
-        typeof window.sessionStorage !== 'undefined') {
-      sessionStorage.setItem('etag', self.articlesETag)
+    if (preferences.cache && window.sessionStorage) {
+      sessionStorage.setItem('etag', articlesETag)
       sessionStorage.setItem('meta', JSON.stringify(
-        self.articlesMetaData
+        articlesMetaData
       ))
       
       sessionStorage.setItem('articles', JSON.stringify(
-        self.articles.map(function (article) {
+        articles.map(function (article) {
           article.element = false
           return article
         })
       ))
       
       sessionStorage.setItem('partials', JSON.stringify(
-        self.partials.map(function (partial) {
+        partials.map(function (partial) {
           partial.element = false
           return partial
         })
@@ -675,9 +654,9 @@ function Polestar(preferences) {
    * @method
    */
   function runPlugins(method, article) {
-    if (self.preferences.plugins) {
-      for (var i = 0; i < self.preferences.plugins.length; ++i) {
-        var plugin = self.preferences.plugins[i]
+    if (preferences.plugins) {
+      for (var i = 0; i < preferences.plugins.length; ++i) {
+        var plugin = preferences.plugins[i]
         var hasMethod = plugin.hasOwnProperty(method)
         var runsMethod = typeof plugin[method] === 'function'
 
@@ -694,8 +673,8 @@ function Polestar(preferences) {
    * @method
    */
   function refreshLocationHash() {
-    if (window.location.hash) {
-      window.location.hash = window.location.hash
+    if (location.hash) {
+      location.hash = location.hash
     }
   }
 

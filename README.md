@@ -1,23 +1,21 @@
 Polestar
 ========
 
-Polestar is a tiny Markdown site authoring and blogging tool in JavaScript—GitHub flavored and fully client-side. It's currently around 600 lines fully commented and wrapped hard at 70 columns. It should preferably weigh in at no more than 500 lines.
+Polestar is a tiny Markdown site authoring and blogging tool in JavaScript—GitHub flavored and fully client-side. It's currently about 7 kB minified, and around 600 lines fully commented and wrapped hard at 70 columns. It should preferably weigh in at no more than that.
 
-This repository is an example copy of [my own blog](https://github.com/dnordstrom/mrnordstrom.com), so if you're interested, take a look at `index.html` for usage, `polestar/polestar.js` for the source, or [mrnordstrom.com](https://mrnordstrom.com) to see it in the wild.
+Polestar itself can be found at `polestar/polestar.js`. The latest version is always in use at [mrnordstrom.com](https://github.com/dnordstrom/mrnordstrom.com).
 
-**This is alpha software**—some things may not work and others will definitely change. This documentation is a quickly put together work in progress.
+**This is alpha software.** Some things may not work and others will definitely change. The documentation is a quickly put together work in progress.
 
-*Much of the information in this README made its first appearance in the introductory post at [mrnordstrom.com](http://mrnordstrom.com).*
+*Since much of the information in this README made its original appearance in the introductory post at [mrnordstrom.com](http://mrnordstrom.com), this copy is admittedly a blatant copy.*
 
 Notable Notes
 -------------
 
-- **January 8, 2014 &middot; Minification Script**<br>Added a Node.js-based minification script at `polestar/tools/polestar.minify.js` (see usage below).
-- **January 8, 2014 &middot; Syntax Highlighting**<br>The CSS now includes stylish GitHub-style styling&mdash;[use fenced code blocks and specify language](https://help.github.com/articles/github-flavored-markdown#syntax-highlighting).
-- **January 8, 2014 &middot; GitHub Credentials**<br>You may now **_increase the GitHub API rate limit from 60 to 5000 requests_** by specifying your credentials in "username" and "password" debug parameters (immensely useful during preview and development), as such: `example.com#!username=dnordstrom&password=whatever`
-- **January 8, 2014 &middot; Debug Output**<br>You may now enable debug console output (of admittedly limited use) by using the `#!debug` parameter&mdash;remaining requests within GitHub's rate limit, for instance.
-- **January 7, 2014 &middot; Debug Parameters**<br>Query string like key-value pairs (value is optional) are now parsed if inserted after a location hashbang (e.g. `example.com#!key=value&key`).
-- **January 7, 2014 &middot; Static Site and Feed Generator**<br>An early alpha is available at `polestar/tools/polestar.static.js`. It's a quick and dirty Node.js-based command line tool I use to generate a feed.xml file and search engine indexable HTML versions of posts in a `/static` subdirectory of my site. Please note that it needs a gigantic drop of miserably heart-straining work before we call it a beta.
+- **Minification Script**<br>1/8/2014 &middot; Added a Node.js-based minification script at `polestar/tools/polestar.minify.js` (see usage below).
+- **Syntax Highlighting**<br>1/8/2014 &middot; The CSS now includes stylish GitHub-style styling of code blocks&mdash;just [specify the language](https://help.github.com/articles/github-flavored-markdown#syntax-highlighting).
+- **GitHub Credentials**<br>1/8/2014 &middot; You may now *increase the GitHub API rate limit from 60 to 5000 requests* by specifying your credentials in "username" and "password" debug parameters (immensely useful during preview and development), as such: `example.com#!username=dnordstrom&password=whatever`
+- **Static Site and Feed Generator**<br>1/6/2014 &middot; An early alpha is available at `polestar/tools/polestar.static.js`. It's a quick and dirty Node.js-based command line tool I use to generate a feed.xml file and search engine indexable HTML versions of posts in a `/static` subdirectory of my site. It needs a gigantic drop of miserably heart-straining work before it's a beta.
 
 Featured Features
 -----------------
@@ -36,17 +34,17 @@ Featured Features
 
 Polestar has no dependencies, but requires a browser that supports things like `XMLHttpRequest` and `document.querySelector`.
 
-**Note:** When previewing a local article, keep in mind GitHub's rate limit of 60 unauthenticated requests per hour unless you use your credentials (as the API is used to parse the Markdown).
+**Note:** When previewing a local article, keep in mind GitHub's rate limit of 60 unauthenticated requests per hour unless you use your credentials (the API is used to parse the Markdown on each page load).
 
 Useful Usage
 ------------
 
-The following is used on my blog to load writings from the `writings` subdirectory of the GitHub Pages branch of `dnordstrom/mrnordstrom.com`, and append them to the element with the class "writings":
+The following tells Polestar to parse files in the `writings` subdirectory of the GitHub Pages branch of `dnordstrom/polestar`, and append the results to the element with the class "writings":
 
 ```html
 <script>
   new Polestar({
-    repo: 'dnordstrom/mrnordstrom.com/writings',
+    repo: 'dnordstrom/polestar/writings',
     branch: 'gh-pages',
     into: '.writings',
     plugins: [
@@ -74,13 +72,13 @@ You may, of course, specify a subdirectory as well: `data-at="partials/about"`
 python -m SimpleHTTPServer
 ```
 
-While it's far from ready for general use, the following is the command I personally use to run the static site and feed generator (details for the RSS feed are also fetched from meta tags in `index.html`):
+While far from ready for general use, the following is the command I personally use to run the static site and feed generator (note that details for the RSS feed are also fetched from meta tags in `index.html`):
 
 ```
 ./polestar/tools/polestar.static.js --output static --input . --branch gh-pages --repo dnordstrom/mrnordstrom.com/writings --username dnordstrom --password ****** --site http://mrnordstrom.com
 ```
 
-The minification script makes eyes bleed considerably less. It sports a single `--polestar` flag for pointing to the directory of `polestar.js` and `polestar.css`&mdash;it can be omitted as it defaults to (you guessed it) `polestar/`: 
+The minification script makes your eyes bleed considerably less. It sports a single `--polestar` flag for pointing to the directory of `polestar.js` and `polestar.css`, which can be omitted as it defaults to (you guessed it) `polestar/`: 
 
 ```
 $ ./polestar/tools/polestar.minify.js

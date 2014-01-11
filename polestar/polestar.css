@@ -136,6 +136,7 @@ body {
 a {
   border-bottom: 2px solid rgba(221, 221, 221, 0);
   color: rgb(129, 206, 167);
+  font-weight: 400;
   text-decoration: none;
   transition: all 0.25s ease 0.25s;
 }
@@ -147,7 +148,9 @@ a:hover {
 }
 
 b,
-strong {
+b a,
+strong,
+strong a {
   font-weight: 500;
 }
 
@@ -307,6 +310,7 @@ dd:hover {
 
 .about a {
   color: #FFFFFF;
+  font-weight: 300;
 }
 
 .about .permalink {
@@ -348,11 +352,12 @@ dd:hover {
   margin: 0 4px 0 16px;
 }
 
-/** About */
+/** Biography */
 
 .about p {
   background: rgb(129, 206, 167);
   bottom: 4em;
+  margin: 0 0 0 4em;
   max-width: 55em;
   position: absolute;
   right: 4em;
@@ -738,6 +743,27 @@ dd:hover {
 .highlight .gc {
   color: #999;
   background-color: #EAF2F5;
+}
+
+/**
+ * Responsiveness
+ */
+
+/* Quick little hack for smartphones */
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  html {
+    font-size: 10px;
+    font-size: 62.5%;
+  }
+
+  .about h1,
+  .about h2,
+  .about ul,
+  .about li {
+    font-size: 14px;
+    font-size: 1.4rem;
+  }
 }
 
 /**
