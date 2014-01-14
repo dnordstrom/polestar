@@ -280,8 +280,8 @@ blockquote,
 pre,
 dd {
   border-left: 0.35em solid rgb(174, 224, 200);
-  margin: 0 5em 2em 2em;
-  padding: 0.25em 1em 0.2em;
+  margin: 0px 5em 2em -1.35em;
+  padding: 0.25em 1.1em 0.2em;
   transition: all 0.25s ease 0.25s;
 }
 
