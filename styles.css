@@ -133,10 +133,13 @@ body {
   widows: 4;
 }
 
+/* Inline block and line height to control border spacing */
 a {
   border-bottom: 2px solid rgba(221, 221, 221, 0);
   color: rgb(129, 206, 167);
+  display: inline-block;
   font-weight: 400;
+  line-height: 1.25;
   text-decoration: none;
   transition: all 0.25s ease 0.25s;
 }
@@ -165,19 +168,19 @@ h3,
 h4,
 h5,
 h6 {
-  border-bottom: 0.05em solid rgb(221, 221, 221);
   display: table;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.25;
-  margin: 1.5em auto 0.875em;
+  margin: 1.25em auto 0.7em;
   padding: 0 0.5em 0.2em;
   position: relative;
   text-align: center;
 }
 
 h1 {
-  font-size: 60px;
-  font-size: 3.75rem;
+  border-bottom: 1px solid rgb(221, 221, 221);
+  font-size: 56px;
+  font-size: 3.5rem;
 }
 
 h2 {
@@ -372,13 +375,15 @@ dd:hover {
 
 .writings {
   background: #F9F9F9;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.15);
   margin: 100vh 0 0;
   position: relative;
   z-index: 2;
 }
 
 .writings article {
-  padding: 4rem 0px 9rem;
+  padding: 4em 0 9em;
+  padding: 4rem 0 9rem;
   position: relative;
 }
 
@@ -400,9 +405,15 @@ dd:hover {
 
 .writings ul li:before {
   content: "–";
-  left: -1.5em;
+  margin-right: 100%;
   position: absolute;
+  right: 0.9em;
   top: 0;
+}
+
+.writings ul ul li:before {
+  content: "– –";
+  white-space: nowrap;
 }
 
 /**
@@ -764,35 +775,4 @@ dd:hover {
     font-size: 14px;
     font-size: 1.4rem;
   }
-}
-
-/**
- * Plugin: Permalinks
- */
-
-.permalink {
-  border: none;
-  opacity: 0.25;
-  position: absolute;
-  right: 4rem;
-  text-decoration: none;
-  top: 4rem;
-}
-
-.permalink:hover {
-  opacity: 1;
-}
-
-/**
- * Plugin: Hover Lists
- */
-
-ul li .hoverlist-body {
-  opacity: 0.7;
-  transition: all 0.25s ease 0.25s;
-}
-
-ul li:hover .hoverlist-body {
-  opacity: 1;
-  transition: all 0.15s ease 0s;
 }

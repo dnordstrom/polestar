@@ -1,0 +1,16 @@
+/**
+ * Default styles for Polestar's Permalinks plugin
+ */
+
+.permalink {
+  border: none;
+  opacity: 0.25;
+  position: absolute;
+  right: 4rem;
+  text-decoration: none;
+  top: 4rem;
+}
+
+.permalink:hover {
+  opacity: 1;
+}

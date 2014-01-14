@@ -1,7 +1,8 @@
 /**
- * Adds links to static versions of Polestar articles, assuming they
- * are located in a `/static` subdirectory. Later, it should
- * obviously be possible to specify this directory.
+ * This is a variation of the Permalinks plugin, adding links to
+ * static versions of Polestar articles (assuming they are located in
+ * a `/static` subdirectory). It should later be possible to specify
+ * this directory, of course.
  *
  * @author  L. Daniel Nordstrom <d@mrnordstrom.com>
  * @version 0.1.0
@@ -55,7 +56,7 @@ Polestar.Staticlinks = {
       permalink.appendChild(document.createTextNode('#'))
     }
 
-    permalink.setAttribute('class', 'permalink')
+    permalink.setAttribute('class', 'staticlink')
     permalink.setAttribute('href', 'static/' + writing.id)
     writing.element.appendChild(permalink)
   }

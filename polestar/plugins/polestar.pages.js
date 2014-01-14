@@ -26,20 +26,23 @@
  */
 Polestar.Pages = (function () {
   var self = this
+  var instance = false
 
   /**
-   * Appends an error message layer to the page.
+   * Appends an page layer to the page and returns container node.
    *
    * @method
    * @param {String} content Page content as HTML
+   * @returns {DOMNode} Container node appended to body node
    */
-  function showPage(content) {
+  function renderPage(content) {
     var element = document.createElement('div')
     var innerElement = document.createElement('div')
     var closeLink = document.createElement('a')
 
-    closeLink.setAttribute('class', 'close')
-    closeLink.appendChild(document.createTextNode('Close'))
+    closeLink.setAttribute('class', 'page-close-link')
+    closeLink.setAttribute('href', '#')
+    closeLink.appendChild(document.createTextNode('+'))
     closeLink.onclick = function (event) {
       event.preventDefault()
 
@@ -47,10 +50,59 @@ Polestar.Pages = (function () {
     }
 
     innerElement.innerHTML = content
+    innerElement.setAttribute('class', 'page-inner')
     element.setAttribute('class', 'page')
     element.appendChild(innerElement)
     element.appendChild(closeLink)
 
     document.body.appendChild(element)
+
+    setTimeout(function () {
+      element.setAttribute('class', 'page page-visible')
+    }, 50)
+
+    return element
   }
+
+  function bindLinksInContainer(container) {
+    var links = container.querySelectorAll('a[href^="#!"]')
+
+    for (var i = 0; i < links.length; ++i) {
+      var link = links[i]
+      var at = link.getAttribute('href').split('#!')[1]
+      var id = link.getAttribute('id')
+
+      !(function (link, at, id) {
+        link.onclick = function (event) {
+          event.preventDefault()
+
+          instance.getURL({ url: at + '.md' }, function (response) {
+            instance.parseMarkdown(response.body, function (content) {
+              var page = {
+                at: at,
+                content: content,
+                id: ''
+              }
+              
+              instance.runPlugins('beforeRender', page)
+              page.element = renderPage(content)
+              instance.runPlugins('afterRender', page)
+            })
+          })
+        }
+      }(link, at, id))
+    }
+  }
+
+  self.beforeAll = function (polestar) {
+    instance = polestar
+    bindLinksInContainer(document)
+  }
+
+  self.afterRender = function (polestar, writing) {
+    instance = polestar
+    bindLinksInContainer(writing.element)
+  }
+
+  return self
 }())

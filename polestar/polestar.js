@@ -108,6 +108,8 @@ function Polestar(userPreferences) {
     if (preferences.draft) {
       loadDraft()
     }
+
+    self.runPlugins('beforeAll')
     
     if (!preferences.cache || !loadPartialsFromCache()) {
       loadPartials()
@@ -262,10 +264,11 @@ function Polestar(userPreferences) {
    * and `headers` (the only header we need is the `ETag`.
    *
    * @method
+   * @public
    * @param {Object} options Object (`url` and `headers` properties)
    * @param {Function} callback Callback function to pass response
    */
-  function getURL(options, callback) {
+  self.getURL = function (options, callback) {
     var xhr = new XMLHttpRequest()
 
     xhr.open('GET', options.url, true)
@@ -314,10 +317,11 @@ function Polestar(userPreferences) {
    * returns the resulting HTML to a callback function.
    *
    * @method
+   * @public
    * @param {String} source Markdown source to parse
    * @param {Function} callback Callback function to pass HTML
    */
-  function parseMarkdown(source, callback) {
+  self.parseMarkdown = function (source, callback) {
     var xhr = new XMLHttpRequest()
 
     xhr.open('POST', 'https://api.github.com/markdown/raw', true)
@@ -389,7 +393,7 @@ function Polestar(userPreferences) {
       options.headers = { 'If-None-Match': articlesETag }
     }
     
-    getURL(options, function (response) {
+    self.getURL(options, function (response) {
       if (response === false) {
         loadArticlesFromCache()
       } else {
@@ -426,8 +430,8 @@ function Polestar(userPreferences) {
         headers: { 'Accept': 'application/vnd.github.v3.raw' }
       }
       
-      getURL(options, function (response) {
-        parseMarkdown(response.body, function (content) {
+      self.getURL(options, function (response) {
+        self.parseMarkdown(response.body, function (content) {
           var done = nextIndex + 1 >= articlesMetaData.length
           var matchesTarget = id === locationHashTarget
           var article = {
@@ -439,9 +443,9 @@ function Polestar(userPreferences) {
           if (!articles[nextIndex]) {
             articles[nextIndex] = article
             
-            runPlugins('beforeRender', article)
+            self.runPlugins('beforeRender', article)
             renderArticle(article)
-            runPlugins('afterRender', article)
+            self.runPlugins('afterRender', article)
           }
 
           /* Go to location hash if done loading without specific
@@ -498,8 +502,8 @@ function Polestar(userPreferences) {
       var id = element.getAttribute('id')
       
       !(function (element, at, id) {
-        getURL({ url: at + '.md' }, function (response) {
-          parseMarkdown(response.body, function (content) {
+        self.getURL({ url: at + '.md' }, function (response) {
+          self.parseMarkdown(response.body, function (content) {
             var partial = {
               at: at,
               content: content,
@@ -509,9 +513,9 @@ function Polestar(userPreferences) {
             
             partials.push(partial)
             
-            runPlugins('beforeRender', partial)
+            self.runPlugins('beforeRender', partial)
             element.innerHTML = partial.content
-            runPlugins('afterRender', partial)
+            self.runPlugins('afterRender', partial)
             
             cache()
           })
@@ -534,9 +538,9 @@ function Polestar(userPreferences) {
       for (var i = 0; i < articles.length; ++i) {
         var article = articles[i]
         
-        runPlugins('beforeRender', article)
+        self.runPlugins('beforeRender', article)
         renderArticle(article)
-        runPlugins('afterRender', article)
+        self.runPlugins('afterRender', article)
       }
     }
   }
@@ -560,10 +564,10 @@ function Polestar(userPreferences) {
           document.querySelector('*[data-at="' + partial.at + '"]')
       
         if (partial && element) {
-          runPlugins('beforeRender', partial)
+          self.runPlugins('beforeRender', partial)
           element.innerHTML = partial.content
           partial.element = element
-          runPlugins('afterRender', partial)
+          self.runPlugins('afterRender', partial)
         }
       }
     }
@@ -582,8 +586,8 @@ function Polestar(userPreferences) {
       var at = preferences.draft
       var id = at.split('/')[at.split('/').length - 1]
       
-      getURL({ url: at + '.md' }, function (response) {
-        parseMarkdown(response.body, function (content) {
+      self.getURL({ url: at + '.md' }, function (response) {
+        self.parseMarkdown(response.body, function (content) {
           if (content) {
             var element = document.createElement('article')
             var div = document.createElement('div')
@@ -594,7 +598,7 @@ function Polestar(userPreferences) {
               id: id
             }
             
-            runPlugins('beforeRender', article)
+            self.runPlugins('beforeRender', article)
             
             div.innerHTML = article.content
             element.appendChild(div)
@@ -610,7 +614,7 @@ function Polestar(userPreferences) {
               container.appendChild(element)
             }
             
-            runPlugins('afterRender', article)
+            self.runPlugins('afterRender', article)
           }
         })
       })
@@ -653,7 +657,7 @@ function Polestar(userPreferences) {
    *
    * @method
    */
-  function runPlugins(method, article) {
+  self.runPlugins = function (method, writing) {
     if (preferences.plugins) {
       for (var i = 0; i < preferences.plugins.length; ++i) {
         var plugin = preferences.plugins[i]
@@ -661,7 +665,8 @@ function Polestar(userPreferences) {
         var canRunMethod = typeof plugin[method] === 'function'
 
         if (hasMethod && canRunMethod) {
-          plugin[method](self, article)
+          writing ?
+            plugin[method](self, writing) : plugin[method](self)
         }
       }
     }

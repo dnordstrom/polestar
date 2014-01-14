@@ -25,21 +25,6 @@ if (inputDirectory.slice(-1) !== '/') {
 }
 
 new compressor.minify({
-  type: 'yui-css',
-  fileIn: inputDirectory + 'polestar.css',
-  fileOut: inputDirectory + 'polestar.min.css',
-  callback: function(error, min){
-    if (error) {
-      console.log(
-        'Failed to minify Polestar\'s CSS. Error: ' + error
-      )
-    } else {
-      console.log('Successfully minified Polestar\'s CSS.')
-    }
-  }
-})
-
-new compressor.minify({
   type: 'yui-js',
   fileIn: inputDirectory + 'polestar.js',
   fileOut: inputDirectory + 'polestar.min.js',

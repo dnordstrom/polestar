@@ -16,6 +16,7 @@ Notable Notes
 - **Syntax Highlighting**<br>1/8/2014 &middot; The CSS now includes stylish GitHub-style styling of code blocks&mdash;just [specify the language](https://help.github.com/articles/github-flavored-markdown#syntax-highlighting).
 - **GitHub Credentials**<br>1/8/2014 &middot; You may now *increase the GitHub API rate limit from 60 to 5000 requests* by specifying your credentials in "username" and "password" debug parameters (immensely useful during preview and development), as such: `example.com#!username=dnordstrom&password=whatever`
 - **Static Site and Feed Generator**<br>1/6/2014 &middot; An early alpha is available at `polestar/tools/polestar.static.js`. It's a quick and dirty Node.js-based command line tool I use to generate a feed.xml file and search engine indexable HTML versions of posts in a `/static` subdirectory of my site. It needs a gigantic drop of miserably heart-straining work before it's a beta.
+- **Dates in Permalinks**<br>1/6/2014 &middot; The permalinks plugin now looks for dates at the beginning of filenames (formatted as "2014-01-01", or without dashes). If a date is found, it's used instead of the hash mark in links.
 
 Featured Features
 -----------------
@@ -25,12 +26,11 @@ Featured Features
 - **GitHub Flavored Markdown**<br>Markdown is parsed by the GitHub API.
 - **Autoload on Scroll**<br>Setting `loadAll: true` instead loads all writings on page load.
 - **Linking**<br>Writings are linkable using location hash, despite their dynamic loading. For instance, "example.com#the-filename" loads each writing until reaching "the-filename.md" (but only if it exists).
-- **Caching**<br>Writings are cached in sessionStorage to avoid unnecessary requests and the GitHub API rate limit.
+- **Caching**<br>Writings are cached in sessionStorage to avoid unnecessary requests and GitHub API's dreaded rate limit.
 - **Previewing**<br>Preview a local, unpublished writing using the "draft" preference (`draft: 'writings/new-article'`). It won't be cached.
-- **Plugins**<br>These are currently objects with `beforeRender` or `afterRender` methods that are called for each writing and partial. The mechanism will be improved.
+- **Plugins**<br>These are objects with methods such as `beforeRender` or `afterAll` that are called with the Polestar instance as first argument. Writing-specific methods like `beforeRender` are also passed an object literal representation of the writing.
 - **Debug Mode and Parameters**<br>Set debug parameters with a location hashbang. Use the "debug" key to enable console output. While previewing, set GitHub credentials with "username" and "password" to increase the rate limit from 60 to 5000. For example: "http://localhost:8000#!username=me&password=gosh&debug"
-- **Example Plugins**
-- **Example Site and Theme**
+- **Plugins, Site, and Theme**<br>The markup, stylesheet, and plugins used on my blog are included. For example, one plugin reverses "mailto" links to perhaps avoid some spam, and another adds the links you see as dates next to writings.
 
 Polestar has no dependencies, but requires a browser that supports things like `XMLHttpRequest` and `document.querySelector`.
 
@@ -72,7 +72,7 @@ You may, of course, specify a subdirectory as well: `data-at="partials/about"`
 python -m SimpleHTTPServer
 ```
 
-While far from ready for general use, the following is the command I personally use to run the static site and feed generator (note that details for the RSS feed are also fetched from meta tags in `index.html`):
+While far from ready for general use, below is the command I use to run the static site and feed generator. If you wish to use it, I suggest viewing the code and modifying it to your needs. It looks for a `static.html` version of the `index.html` file (for me it's just a copy with most of the JavaScript removed), which it uses to generate static HTML (with some typographical enhancement). Note that details for the RSS feed are fetched from meta tags in `static.html`.
 
 ```
 ./polestar/tools/polestar.static.js --output static --input . --branch gh-pages --repo dnordstrom/mrnordstrom.com/writings --username dnordstrom --password ****** --site http://mrnordstrom.com
@@ -90,10 +90,9 @@ Planned Plans
 -------------
 
 * **Refactoring**<br>Refactor as much as possible into plugins to keep things modular and lightweight.
-* **Date feature**<br>The permalink plugin should check for dates in filenames (e.g. `20130106-an-article.md`), and show those instead of the hash mark---or, a new plugin may parse such dates and do something fun with them.
-* **Markdown parser feature**<br>Because the GitHub API parser strips away useful tags like `small`, `cite`, and `figure`, it should be possible to choose your own parser or disable parsing altogether (to use a plugin or other solution).
-* **YAML Front Matter plugin**<br>The data can be used as classes (`class="tag-one tag-two"`) or data-attributes (`data-tagone="value"`), giving more flexibility to plugins and styling.
-* **Pages plugin**<br>This may simply be a plugin that adds functionality to open and close partials (with `data-page` attributes) as modal pages on top of other content.
-* **Error handling**<br>Exceptions, pretty messages, console output, you name it---the real deal.
-* **Plugin mechanism**<br>Make it smarter. Add methods as necessary---a drafts plugin could run `onReady`. Refactor to avoid `Function#call()`, and offer some interfacing with the Polestar instance.
-* **Local version**<br>Create a smaller version of Polestar for rendering only local files, with no GitHub support. The example site will be a quick drop-in solution for rendering a README.md file.
+* **Parser Preference**<br>Because GitHub API's Markdown parser strips away useful tags like `small`, `cite`, and `figure`, it should be possible to choose the parser, Markdown or otherwise (perhaps both), or to disable parsing altogether.
+* **YAML Front Matter Plugin**<br>Parsed data can be used as classes (`class="tag-one tag-two"`) or data-attributes (`data-tagone="value"`), giving more flexibility to plugins and styling.
+* **Pages Plugin**<br>This may simply be a plugin that adds functionality to open and close partials (with `data-page` attributes) as modal pages on top of other content.
+* **Error Handling**<br>Exceptions, pretty messages, console output, you name it---the real deal.
+* **Plugin Mechanism**<br>Make it smarter. Add methods as necessary---a drafts plugin could run `onReady`. Refactor to avoid `Function#call()`, and offer some interfacing with the Polestar instance.
+* **Local Version**<br>Create a smaller version of Polestar for rendering only local files, with no GitHub support. The example site will be a quick drop-in solution for rendering a README.md file.
