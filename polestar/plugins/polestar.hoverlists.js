@@ -24,27 +24,17 @@
  * @author  L. Daniel Nordstrom <d@mrnordstrom.com>
  * @version 0.1.0
  * @license MPL 2.0
- * 
+ *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-/**
- * A plugin is an object with methods acting as "hooks," such as
- * `beforeRender()` or `afterAll()`. All methods are called with the
- * polestar instance as the first argument. Article specific method
- * like `afterRender()` are also passed an object literal
- * representation of the article, with properties such as `id`,
- * `content` (HTML content) and `element` (containing HTML node).
- *
- * @method
- */
-Polestar.HoverLists = {
-  afterRender: function (polestar, writing) {
-    var lists = writing.element.querySelectorAll('li')
+Polestar.HoverLists = function (polestar) {
+  polestar.on('articleRendered', function (data) {
+    var lists = data.article.element.querySelectorAll('li')
 
-    for (var i = 0; i < lists.length; ++i) {
+    for (var i = 0, length = lists.length; i < length; ++i) {
       if (lists[i].innerHTML.match(/<br>/)) {
         var parts = lists[i].innerHTML.split('<br>')
         parts[0] =
@@ -55,5 +45,5 @@ Polestar.HoverLists = {
         lists[i].innerHTML = parts.join('')
       }
     }
-  }
+  })
 }

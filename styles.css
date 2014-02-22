@@ -20,7 +20,7 @@
 /**
  * Fira Sans
  */
- 
+
 /* Bold */
 @font-face {
     font-family: 'Fira Sans';
@@ -169,7 +169,7 @@ h4,
 h5,
 h6 {
   display: table;
-  font-weight: 500;
+  font-weight: 300;
   line-height: 1.25;
   margin: 1.25em auto 0.7em;
   padding: 0 0.5em 0.2em;
@@ -417,26 +417,6 @@ dd:hover {
 }
 
 /**
- * Error message
- */
-.error {
-  background: #F9F9F9;
-  height: 100%;
-  left: 0;
-  padding: 4em 0 0 0;
-  position: fixed;
-  text-align: center;
-  top: 0;
-  width: 100%;
-  z-index: 2;
-}
-
-.error h1 {
-  font-size: 32px;
-  font-size: 2rem;
-}
-
-/**
  * Notice message
  */
 
@@ -481,6 +461,10 @@ dd:hover {
   top: 0;
   width: 100%;
   z-index: 10;
+}
+
+.polestarted .warning {
+  display: none;
 }
 
 /**
@@ -764,15 +748,46 @@ dd:hover {
 
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
   html {
-    font-size: 10px;
-    font-size: 62.5%;
+    font-size: 12px;
+  }
+
+  body {
+    -webkit-text-size-adjust: none;
+  }
+
+  .about h1 {
+    font-weight: 500;
   }
 
   .about h1,
   .about h2,
   .about ul,
   .about li {
-    font-size: 14px;
-    font-size: 1.4rem;
+    display: block;
+    font-size: 16px;
+    text-align: center;
+    padding: 0;
+  }
+
+  .about h1:after,
+  .about h2:after,
+  .about li:not(:last-child):after {
+    display: none;
+  }
+
+  .about {
+    position: relative;
+    min-height: 0;
+  }
+
+  .about p {
+    bottom: auto;
+    margin: 4rem 0 0;
+    position: relative;
+    right: auto;
+  }
+
+  .writings {
+    margin: 0;
   }
 }
