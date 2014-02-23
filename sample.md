@@ -19,7 +19,7 @@ Lists
 1.  Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Nullam id dolor id nibh ultricies vehicula ut id elit.
 
     Vestibulum id ligula porta felis euismod semper. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-    
+
 2.  Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.
 
 Block Elements
@@ -56,7 +56,7 @@ Inline Elements
 * <strong>Strong importance</strong> pops out at you in bold wherever you go.
 * <sup>Superscript</sup> and <sub>subscript</sub> are super-useful.
 * Professor, consider marking up <var>x</var> and <var>y</var> with the `<var>` tag.
-  
+
 Reference Style Links
 ---------------------
 

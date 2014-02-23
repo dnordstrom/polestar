@@ -258,8 +258,7 @@ Polestar.Typogr = function (polestar) {
         .replace('"', '&#8220;');
   };
 
-  polestar.on(['articleParsed', 'partialParsed'], function (data) {
-    var object = data.article || data.partial
-    object.content = smartypants(object.content)
+  polestar.on('rendered', function (partial) {
+    partial.element.innerHTML = smartypants(partial.content)
   })
 }

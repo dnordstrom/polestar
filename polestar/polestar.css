@@ -1,0 +1,279 @@
+/**
+ * Default Air styles, with its color palette based on the
+ * fantastic Scope theme for Tumblr.
+ *
+ * Color Palette
+ * =============
+ * White          · rgb(255, 255, 255)
+ * Lighter Gray   · rgb(221, 221, 221)
+ * Darker Gray    · rgb(153, 153, 153)
+ * Darkest Gray   · rgb(85, 85, 85)
+ * Lighter Green  · rgb(174, 224, 200)
+ * Darker Green   · rgb(129, 206, 167)
+ *
+ * Miscelleneous
+ * =============
+ * Transition In  · all .15s ease 0s
+ * Transition Out · all .25s ease .25s
+ */
+
+/**
+ * General
+ */
+
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+header,
+main,
+article,
+footer {
+  display: block;
+}
+
+body {
+  color: #555;
+  font-family: "Fira Sans", "Open Sans", Helvetica, Arial, sans-serif;
+  font-size: 21px;
+  font-size: 1.3125rem;
+  font-weight: 300;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  -o-hyphens: auto;
+  hyphens: auto;
+  line-height: 1.6;
+  margin: 0;
+  orphans: 4;
+  padding: 0;
+  widows: 4;
+}
+
+a {
+  color: rgb(129, 206, 167);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+b,
+b a,
+strong,
+strong a {
+  font-weight: 500;
+}
+
+img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  display: table;
+  font-weight: 300;
+  line-height: 1.25;
+  margin: 1.6em auto .8em;
+  padding: 0 .5em .2em;
+  text-align: center;
+}
+
+h1 {
+  border-bottom: 1px solid rgb(221, 221, 221);
+  font-size: 64px;
+  font-size: 4rem;
+}
+
+h2 {
+  font-size: 46px;
+  font-size: 2.875rem;
+}
+
+h3 {
+  font-size: 36px;
+  font-size: 2.25rem;
+}
+
+h4 {
+  font-size: 26px;
+  font-size: 1.625rem;
+}
+
+h5 {
+  font-size: 21px;
+  font-size: 1.3125rem;
+  font-weight: 600;
+}
+
+h6 {
+  font-size: 21px;
+  font-size: 1.3125rem;
+}
+
+small,
+.small {
+  font-size: 15px;
+  font-size: .9375rem;
+}
+
+pre,
+code,
+kbd,
+samp,
+var {
+  font-size: .8em;
+}
+
+blockquote {
+  font-size: 23px;
+  font-size: 1.4375rem;
+}
+
+code,
+pre,
+kbd,
+samp,
+var {
+  font-family: 'Fira Mono', monospace;
+  font-style: normal;
+}
+
+code,
+kbd,
+samp,
+var {
+  border: 1px solid rgb(221, 221, 221);
+  margin: 0 .15em;
+  padding: 2px 5px 0px 5px;
+  white-space: nowrap;
+}
+
+pre code {
+  border: none;
+  font-size: 17px;
+  font-size: 1.0625rem;
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+}
+
+pre {
+  overflow: auto;
+}
+
+p {
+  margin: 0 0 1.55em;
+}
+
+p:last-child {
+  margin: 0;
+}
+
+ul,
+ol,
+dl {
+  margin: 0 0 2em;
+  padding: 0;
+}
+
+ul {
+  list-style-type: none;
+}
+
+li {
+  margin-bottom: .35em;
+  position: relative;
+}
+
+ul li:before {
+  content: "–";
+  margin-right: 100%;
+  position: absolute;
+  right: .9em;
+  top: 0;
+}
+
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+  margin-bottom: 0;
+  margin-top: .2em;
+}
+
+ul ul li:before {
+  content: "– –";
+  white-space: nowrap;
+}
+
+dt {
+  font-weight: 400;
+}
+
+blockquote,
+pre,
+dd {
+  border-left: 8px solid rgb(174, 224, 200);
+  margin: 3em 5em 4em -28px;
+  padding: .25em 1.1em .2em 20px;
+  transition: all .25s ease .25s;
+}
+
+blockquote:hover,
+pre:hover,
+dd:hover {
+  border-color: rgb(129, 206, 167);
+  transition: all .15s ease 0s;
+}
+
+hr {
+  height: 1px;
+  border-color: #ddd;
+  border-style: solid;
+  border-width: 1px 0 0;
+  margin: 4em 0;
+}
+
+/**
+ * Layout
+ */
+
+.content {
+  margin: 0 auto 160px;
+  width: 100%;
+  max-width: 45em;
+}
+
+/**
+ * Header
+ */
+
+.header {
+  background: rgb(129, 206, 167);
+  color: #fff;
+  font-size: 64px;
+  font-size: 4rem;
+  margin: 120px 0 100px;
+  padding: 1em 3em;
+  text-align: center;
+}
+
+/**
+ * Partials
+ */
+
+.partial {
+  margin: 10em 3em;
+}

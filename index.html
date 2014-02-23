@@ -6,69 +6,25 @@
 
     <title>Polestar Powered</title>
 
-    <!--
-      Note that these meta tags are also used by the static site generator, to generate required details for the RSS feed.
-    -->
     <meta name="description" content="Please, tell me a story.">
     <meta name="author" content="Mr. Myself">
     <meta name="generator" content="Polestar">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link
-      rel="stylesheet"
-      href="styles.css"
-    >
-    <link
-      rel="stylesheet"
-      href="polestar/plugins/polestar.errors.css"
-    >
-    <link
-      rel="stylesheet"
-      href="polestar/plugins/polestar.hoverlists.css"
-    >
-    <link
-      rel="stylesheet"
-      href="polestar/plugins/polestar.permalinks.css"
-    >
+    <link rel="stylesheet" href="polestar/polestar.css">
   </head>
   <body>
-    <div class="warning">
-      <strong>
-        You are using an outdated browser in which this site, and many others, may not work.
-      </strong>
-      <br>
-      Please upgrade to <a href="http://www.mozilla.org/firefox">Firefox</a> (for an early look at the latest features, try <a href="http://www.mozilla.org/firefox/aurora">Firefox Aurora</a>) or review <a href="http://browsehappy.com/">your options</a>.
-    </div>
+    <main class="content">
+      <header class="header">Polestar 0.1.1</header>
 
-    <header data-at="about" class="about"></header>
-    <section class="writings"></section>
-
-    <div class="notice">
-      <p>
-        Consider subscribing to the <a href="static/feed.xml" title="Subscribe to feed">RSS feed</a>.
-      </p>
-    </div>
+      <div class="partial" data-at="readme.md"></div>
+      <div class="partial" data-at="sample.md"></div>
+    </main>
 
     <script src="polestar/polestar.js"></script>
-    <script src="polestar/plugins/polestar.hoverlists.js"></script>
-    <script src="polestar/plugins/polestar.mailto.js"></script>
-    <script src="polestar/plugins/polestar.permalinks.js"></script>
-    <script src="polestar/plugins/polestar.preview.js"></script>
-    <script src="polestar/plugins/polestar.typogr.js"></script>
+    <script src="polestar/polestar.typogr.js"></script>
     <script>
-      new Polestar({
-        preview: 'writings/0-new.md',
-        repo: 'dnordstrom/polestar/writings',
-        branch: 'master',
-        into: '.writings',
-        plugins: [
-          Polestar.HoverLists,
-          Polestar.Mailto,
-          Polestar.Permalinks,
-          Polestar.Preview,
-          Polestar.Typogr
-        ]
-      })
+      new Polestar({ plugins: [Polestar.Typogr] })
     </script>
   </body>
 </html>
